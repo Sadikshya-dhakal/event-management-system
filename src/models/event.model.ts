@@ -1,28 +1,43 @@
 import { model, Schema, SchemaTypes } from 'mongoose';
-import { User } from './user.model.js';
 
 const eventSchema = new Schema(
   {
     title: {
       type: String,
+      required: true,
     },
     description: {
       type: String,
+      required: true,
     },
-    coverImageURL: {
+    date: {
+      type: Date,
+      required: true,
+    },
+    venue: {
+      type: String,
+      required: true,
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    status: {
+      type: String,
+      enum: ['draft', 'published'],
+      default: 'draft',
+    },
+    bannerPath: {
       type: String,
     },
-    location: {
-      type: String,
-    },
-    createdBy: {
+    organizerId: {
       type: SchemaTypes.ObjectId,
-      ref: User,
+      ref: 'User',
+      required: true,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true }
 );
 
 export const Event = model('Event', eventSchema);
