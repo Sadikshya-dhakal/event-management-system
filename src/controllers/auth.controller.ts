@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { User } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { environment } from '../environment.js';
 
 
 // REGISTER
@@ -66,8 +67,11 @@ export async function loginController(req: Request, res: Response) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Force Mongoose to select the hidden password field
-    const user = await User.findOne({ email: normalizedEmail }).select('+password');
+    // FIX: Add explicit select('+password') to get the hidden field
+    const user = await User.findOne({ email: normalizedEmail }).select('+password').lean();
+
+    console.log('USER FOUND:', user);  // Debug: Check if user exists
+    console.log('PASSWORD EXISTS:', !!user?.password);  // Debug: Check if password exists
 
     if (!user) {
       return res.status(401).json({
@@ -75,21 +79,26 @@ export async function loginController(req: Request, res: Response) {
       });
     }
 
-    // Fail gracefully with a helpful message instead of a bcrypt crash
+    // FIX: Check if password field exists
     if (!user.password) {
       return res.status(500).json({
-        message: 'Database error: This user record does not have a hashed password saved.',
+        message: 'Database error: Password not found. Please register again.',
       });
     }
 
+    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
+    
+    console.log('PASSWORD MATCH:', isMatch);  // Debug: Check if passwords match
+
     if (!isMatch) {
       return res.status(401).json({
         message: 'Invalid credentials',
       });
     }
 
-    const secret = process.env.JWT_SECRET || 'secret';
+    // Generate token
+    const secret = environment.JWT_SECRET || 'secret';
     const token = jwt.sign({ id: user._id }, secret, {
       expiresIn: '7d',
     });
@@ -103,6 +112,7 @@ export async function loginController(req: Request, res: Response) {
       },
     });
   } catch (err: any) {
+    console.error('LOGIN ERROR:', err);  // Debug: Log full error
     return res.status(500).json({
       message: err.message,
     });
