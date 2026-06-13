@@ -3,9 +3,9 @@ import { User } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// ========================
+
 // REGISTER
-// ========================
+
 export async function registerController(req: Request, res: Response) {
   try {
     console.log('REQ BODY:', req.body);
@@ -50,9 +50,8 @@ export async function registerController(req: Request, res: Response) {
   }
 }
 
-// ========================
 // LOGIN
-// ========================
+
 export async function loginController(req: Request, res: Response) {
   try {
     console.log('LOGIN BODY:', req.body);
