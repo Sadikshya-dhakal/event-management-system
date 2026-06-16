@@ -4,7 +4,7 @@ import { connectDb } from './services/db.js';
 
 export const app = express();
 
-app.use(express.json());
+app.use(express.json()); // Middleware to parse JSON bodies
 
 connectDb()
   .then(() => {

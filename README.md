@@ -18,12 +18,7 @@ npm install
 ### **2. Environment Variables**
 
 Create a `.env` file (copy from `.env.example`):
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/event
-JWT_SECRET=7c82b01e3cefffe6a9a854083512a5d9fee3a7f4ba1b15cb027432d5906efcd7
-REDIS_URL=redis://localhost:6379
-```
+
 
 ### **3. Start Redis (Docker)**
 
